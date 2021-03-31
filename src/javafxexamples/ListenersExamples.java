@@ -2,10 +2,17 @@ package javafxexamples;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class ListenersExamples extends Application {
@@ -14,7 +21,7 @@ public class ListenersExamples extends Application {
         primaryStage.setTitle("Пример про слушателей");
 
         Parent ui = createInterface();
-        primaryStage.setScene(new Scene(ui, 640, 480));
+        primaryStage.setScene(new Scene(ui, 640, 440));
 
         primaryStage.show();
     }
@@ -22,21 +29,31 @@ public class ListenersExamples extends Application {
     private Parent createInterface() {
 
         Button b = new Button("Кнопка");
+        b.setPrefSize(200,50);
 
-        b.addEventHandler(ActionEvent.ACTION, actionEvent -> {
-            System.out.println(actionEvent.getSource());
-            System.out.println("Не нажимай больше эту кнопку");
+        Label label = new Label("Не трогайте кнопочку, она спит");
+        label.setStyle("-fx-font-size: 20px");
+
+        VBox vb = new VBox(label, b);
+        vb.setAlignment(Pos.CENTER);
+
+        String[] phrases = new String[] {"Не нажимай больше на эту кнопку!", "Я просил, не нажимай больше на эту кнопку!", "По-человечески же просят, ну!", "Последнее предупреждение!!!"};
+
+        ImageView img = new ImageView(new Image("file:image/boop.jpg"));
+
+        b.setOnAction(new EventHandler<>() {
+            int counter = 0;
+            @Override
+            public void handle(ActionEvent event) {
+                if (counter == 4) {
+                    vb.getChildren().clear();
+                    vb.getChildren().add(img);
+                } else {
+                    label.setText(phrases[counter++]);
+                }
+            }
         });
 
-        b.addEventHandler(MouseEvent.MOUSE_ENTERED, mouseEvent -> {
-            System.out.println("x,y = " + mouseEvent.getX() + " " + mouseEvent.getY());
-            System.out.println("Уведи мышь, эту кнопку нельзя нажимать");
-        });
-
-        b.setOnAction(actionEvent -> {
-            System.out.println("событие нажатия через свойство onAction");
-        });
-
-        return b;
+        return vb;
     }
 }
